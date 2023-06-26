@@ -2,17 +2,18 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from dotenv import load_dotenv
-from os import getenv
+from os import getenv, path
 from time import sleep
 from random import random
 
 
 load_dotenv()
-
+script_dir = path.dirname(path.abspath(__file__))
 
 def get_lyrics() -> str:
     lines = []
-    with open("lyrics.txt") as file:
+    file_path = path.join(script_dir, "lyrics.txt")
+    with open(file_path) as file:
         for line in file:
             lines.append(line.strip())
 
@@ -24,8 +25,9 @@ def main():
     PASSWORD = getenv("PASSWORD")
 
     # chrome_driver_path = "./chromedriver_mac_arm64/chromedriver"
-    chrome_optons = webdriver.ChromeOptions()
-    driver = webdriver.Chrome(options=chrome_optons)
+    chrome_options = webdriver.ChromeOptions()
+    # chrome_options.add_argument('--headless')
+    driver = webdriver.Chrome(options=chrome_options)
 
     driver.get("https://instagram.com")
 
@@ -69,6 +71,7 @@ def main():
     submit_button.click()
 
     sleep(3)
+    driver.close()
 
 
 if __name__ == "__main__":
