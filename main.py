@@ -10,9 +10,11 @@ from random import random
 load_dotenv()
 script_dir = path.dirname(path.abspath(__file__))
 
+
 def get_lyrics() -> str:
     lines = []
     file_path = path.join(script_dir, "lyrics.txt")
+
     with open(file_path) as file:
         for line in file:
             lines.append(line.strip())
@@ -24,10 +26,13 @@ def main():
     USERNAME = getenv("USERNAME")
     PASSWORD = getenv("PASSWORD")
 
-    # chrome_driver_path = "./chromedriver_mac_arm64/chromedriver"
-    chrome_options = webdriver.ChromeOptions()
-    # chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(options=chrome_options)
+    firefox_options = webdriver.FirefoxOptions()
+    firefox_options.add_argument("--headless")
+    driver = webdriver.Firefox(options=firefox_options)
+
+    # chrome_options = webdriver.ChromeOptions()
+    # chrome_options.add_argument("--headless")
+    # driver = webdriver.Chrome(options=chrome_options)
 
     driver.get("https://instagram.com")
 
@@ -54,12 +59,22 @@ def main():
     profile_link.click()
 
     sleep(2)
-    edit_profile = driver.find_element(
-        By.XPATH, "//a[contains(text(), 'Edit Profile')]"
-    )
+
+    edit_profile = None
+
+    try:
+        edit_profile = driver.find_element(
+            By.XPATH, "//a[contains(text(), 'Edit profile')]"
+        )
+
+    except:  # noqa: E722
+        edit_profile = driver.find_element(
+            By.XPATH, "//a[contains(text(), 'Edit Profile)]"
+        )
+
     edit_profile.click()
 
-    sleep(4)
+    sleep(2)
     bio = driver.find_element(By.XPATH, "//textarea")
     bio.clear()
 
