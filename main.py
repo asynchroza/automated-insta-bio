@@ -1,3 +1,4 @@
+from json import loads
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -5,6 +6,7 @@ from dotenv import load_dotenv
 from os import getenv, path
 from time import sleep
 from random import random
+from requests import get
 
 
 load_dotenv()
@@ -20,6 +22,15 @@ def get_lyrics() -> str:
             lines.append(line.strip())
 
     return lines[int(random() * len(lines))]
+
+
+def get_quote() -> str:
+    url = "https://api.api-ninjas.com/v1/quotes?category=life"  # https://api-ninjas.com/api/quotes
+    headers = {"X-Api-Key": getenv("NINJA_API_KEY")}
+    response = loads(get(url=url, headers=headers).content)[0]
+    # quote = f"\"{response['quote']}\" - {response['author']}"
+    quote = f"\"{response['quote']}\""
+    return quote
 
 
 def main():
@@ -79,6 +90,7 @@ def main():
     bio.clear()
 
     value = get_lyrics()
+    # value = get_quote()
     bio.send_keys(value)
 
     sleep(2)
@@ -91,3 +103,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # print(get_quote())  # for easy testing
